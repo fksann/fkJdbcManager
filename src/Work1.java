@@ -1,9 +1,6 @@
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
 
 import Mapper.AquaJdbcManager;
-import Mapper.Where;
 
 public class Work1 {
 
@@ -11,14 +8,10 @@ public class Work1 {
 		AquaJdbcManager ajm = new AquaJdbcManager("jdbc:mysql://localhost:3306/data?characterEncoding=UTF-8", "root",
 				"3927");
 
-//		List<Map<String, Object>> resultMap13 = ajm.from("emp_mst")
-//				.where(or(eq("div_id", "1"), eq("div_id", "2")), or(eq("div_id", "2"), eq("div_id", "3")))
-//				.getResultList();
-//
-		List<Map<String, Object>> resultMap14 = ajm.from("emp_mst")
-				.where(new Where().and(new Where().or(new Where().eq("div_id", "1"), new Where().eq("div_id", "2")),
-						new Where().or(new Where().eq("div_id", "2"), new Where().eq("div_id", "3"))))
-				.getResultList();
+		//SQLでのアップデート処理（insert,update,delete）戻り値:更新した行数。
+				int updateCount = ajm.updateBySql("insert table_name ('col1','col2') values ('val1', 'val2')").execute();
+				//パラメータ渡しの場合
+				int updateCount = ajm.updateBySql("insert table_name ('col1','col2') values (?, ?)",String.class,String.class).params("val1","val2").execute();
 
 		System.out.println("hello.");
 	}
