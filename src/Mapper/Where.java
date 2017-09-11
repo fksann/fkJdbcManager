@@ -11,13 +11,13 @@ public class Where {
 	public Where() {
 	}
 
-	public Where and(Where where1, Where where2) {
-		combineWhereClause(where1, where2, " and ");
+	public Where and(Where... whereS) {
+		combineWhereClause(" and ", whereS);
 		return this;
 	}
 
-	public Where or(Where where1, Where where2) {
-		combineWhereClause(where1, where2, " or ");
+	public Where or(Where... whereS) {
+		combineWhereClause(" or ", whereS);
 		return this;
 	}
 
@@ -143,15 +143,17 @@ public class Where {
 		return this;
 	}
 
-	protected void combineWhereClause(Where where1, Where where2, String operator) {
-		String whereClauses = "("+where1.whereStr + operator + where2.whereStr+")";
-		whereStr = " where "+whereClauses.replaceAll(" where ", "");
-		combineValueList(where1.valueList,where2.valueList);
-	}
-
-	protected void combineValueList(List l1, List l2) {
-		valueList.addAll(l1);
-		valueList.addAll(l2);
+	protected void combineWhereClause(String operator, Where... whereS) {
+		String whereClauses = "(";
+		for (int i = 0; i < whereS.length; i++) {
+			if (i == 0) {
+				whereClauses += whereS[i].whereStr;
+			} else {
+				whereClauses += operator + whereS[i].whereStr;
+			}
+			valueList.addAll(whereS[i].valueList);
+		}
+		whereStr = " where " + whereClauses.replaceAll(" where ", "")+")";
 	}
 
 	protected void addCondition(ConditionType conditionType, String columnName, String value) {
