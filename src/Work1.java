@@ -9,9 +9,9 @@ public class Work1 {
 				"3927");
 
 		//SQLでのアップデート処理（insert,update,delete）戻り値:更新した行数。
-				int updateCount = ajm.updateBySql("insert table_name ('col1','col2') values ('val1', 'val2')").execute();
+//				int updateCount1 = ajm.updateBySql("insert into emp_mst (emp_id,emp_nm,div_id) values ('76', '加納義彦','4')").execute();
 				//パラメータ渡しの場合
-				int updateCount = ajm.updateBySql("insert table_name ('col1','col2') values (?, ?)",String.class,String.class).params("val1","val2").execute();
+				int updateCount2= ajm.updateBySql("insert into emp_mst (emp_id,emp_nm,div_id) values  (?, ?, ?)",Integer.class,String.class,Integer.class).params(78,"加納義彦",4).execute();
 
 		System.out.println("hello.");
 	}

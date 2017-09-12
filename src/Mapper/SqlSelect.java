@@ -16,17 +16,17 @@ public class SqlSelect {
 		this.sql = sql;
 	}
 
-	public List<Map<String, Object>> getResultList() throws SQLException{
+	public List<Map<String, Object>> getResultList() throws SQLException {
 		PreparedStatement ps = connection.prepareStatement(sql);
 		return Select.executeMultiple(ps);
 	}
 
-	public Map<String, Object> getSingleResult() throws SQLException{
+	public Map<String, Object> getSingleResult() throws SQLException {
 		PreparedStatement ps = connection.prepareStatement(sql);
 		return Select.executeSingle(ps);
 	}
 
-	public long getCount() throws SQLException{
+	public long getCount() throws SQLException {
 		PreparedStatement ps = connection.prepareStatement(sql);
 		return Select.executeCount(ps);
 	}

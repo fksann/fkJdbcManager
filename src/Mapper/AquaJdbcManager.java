@@ -6,16 +6,16 @@ import java.sql.SQLException;
 
 public class AquaJdbcManager {
 
-	Connection connection;
-	AutoSelect automatedSqlExecuter;
+	protected Connection connection;
+	protected AutoSelect automatedSqlExecuter;
 
 	public AquaJdbcManager(String db_url, String db_user_id, String db_user_password) throws SQLException {
 		connection = DriverManager.getConnection(db_url, db_user_id, db_user_password);
 	}
 
-	//select
+	// select
 	public SqlSelect selectBySql(String sql) {
-		SqlSelect directSqlExecuter = new SqlSelect(this, sql);
+		SqlSelect directSqlExecuter = new SqlSelect(connection, sql);
 		return directSqlExecuter;
 	}
 
@@ -34,9 +34,15 @@ public class AquaJdbcManager {
 		return automatedSqlExecuter;
 	}
 
-	//update,insert,delete
-	public SqlUpdate updateBySql(String sql){
-		return null;
+	// update,insert,delete
+	public SqlUpdate updateBySql(String sql) {
+		SqlUpdate directSqlExecuter = new SqlUpdate(connection, sql);
+		return directSqlExecuter;
+	}
+
+	public SqlUpdate updateBySql(String sql, Class<?>... paramClasses) {
+		SqlUpdate directSqlExecuter = new SqlUpdate(connection, sql, paramClasses);
+		return directSqlExecuter;
 	}
 
 }
