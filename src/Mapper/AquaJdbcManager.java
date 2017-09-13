@@ -45,4 +45,21 @@ public class AquaJdbcManager {
 		return directSqlExecuter;
 	}
 
+	public AutoUpdate insert(String string) {
+		// TODO 自動生成されたメソッド・スタブ
+		return null;
+	}
+
+	public AutoUpdate update(String string) {
+		// TODO 自動生成されたメソッド・スタブ
+		return null;
+	}
+
+	public AutoUpdate delete(String string) {
+		// TODO 自動生成されたメソッド・スタブ
+		return null;
+	}
+
+
+
 }
