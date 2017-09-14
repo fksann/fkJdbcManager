@@ -3,5 +3,32 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="lib" path="C:/pleiades/workspace/AquaJdbWork/lib/mysql-connector-java-5.1.42-bin.jar"/>
+	<classpathentry kind="lib" path="C:/workspace/aquaJdbcManager/library/aopalliance-1.0.jar"/>
+	<classpathentry kind="lib" path="C:/workspace/aquaJdbcManager/library/cglib-nodep-2.1_3.jar"/>
+	<classpathentry kind="lib" path="C:/workspace/aquaJdbcManager/library/commons-logging-1.1.jar"/>
+	<classpathentry kind="lib" path="C:/workspace/aquaJdbcManager/library/easymock-2.4.jar"/>
+	<classpathentry kind="lib" path="C:/workspace/aquaJdbcManager/library/easymockclassextension-2.4.jar"/>
+	<classpathentry kind="lib" path="C:/workspace/aquaJdbcManager/library/geronimo-annotation_1.0_spec-1.0.jar"/>
+	<classpathentry kind="lib" path="C:/workspace/aquaJdbcManager/library/geronimo-ejb_2.1_spec-1.0.jar"/>
+	<classpathentry kind="lib" path="C:/workspace/aquaJdbcManager/library/geronimo-ejb_3.0_spec-1.0.jar"/>
+	<classpathentry kind="lib" path="C:/workspace/aquaJdbcManager/library/geronimo-interceptor_3.0_spec-1.0.jar"/>
+	<classpathentry kind="lib" path="C:/workspace/aquaJdbcManager/library/geronimo-j2ee_1.4_spec-1.0.jar"/>
+	<classpathentry kind="lib" path="C:/workspace/aquaJdbcManager/library/geronimo-jpa_3.0_spec-1.0.jar"/>
+	<classpathentry kind="lib" path="C:/workspace/aquaJdbcManager/library/geronimo-jta_1.1_spec-1.0.jar"/>
+	<classpathentry kind="lib" path="C:/workspace/aquaJdbcManager/library/geronimo-jta_1.1_spec-1.0-tsr.jar"/>
+	<classpathentry kind="lib" path="C:/workspace/aquaJdbcManager/library/hsqldb-1.8.0.1.jar"/>
+	<classpathentry kind="lib" path="C:/workspace/aquaJdbcManager/library/javassist-3.4.ga.jar"/>
+	<classpathentry kind="lib" path="C:/workspace/aquaJdbcManager/library/junit-3.8.2.jar"/>
+	<classpathentry kind="lib" path="C:/workspace/aquaJdbcManager/library/junit-4.4.jar"/>
+	<classpathentry kind="lib" path="C:/workspace/aquaJdbcManager/library/junit-addons-1.4.jar"/>
+	<classpathentry kind="lib" path="C:/workspace/aquaJdbcManager/library/log4j-1.2.13.jar"/>
+	<classpathentry kind="lib" path="C:/workspace/aquaJdbcManager/library/mysql-connector-java-5.1.43-bin.jar"/>
+	<classpathentry kind="lib" path="C:/workspace/aquaJdbcManager/library/ognl-2.6.9-patch-20090427.jar"/>
+	<classpathentry kind="lib" path="C:/workspace/aquaJdbcManager/library/poi-3.0-FINAL.jar"/>
+	<classpathentry kind="lib" path="C:/workspace/aquaJdbcManager/library/portlet-api-1.0.jar"/>
+	<classpathentry kind="lib" path="C:/workspace/aquaJdbcManager/library/s2-extension-2.4.48.jar"/>
+	<classpathentry kind="lib" path="C:/workspace/aquaJdbcManager/library/s2-framework-2.4.48.jar"/>
+	<classpathentry kind="lib" path="C:/workspace/aquaJdbcManager/library/s2-tiger-2.4.48.jar"/>
+	<classpathentry kind="lib" path="C:/workspace/aquaJdbcManager/library/uow_api-6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

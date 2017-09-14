@@ -3,13 +3,12 @@ package Mapper;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.List;
 
 public class SqlUpdate {
 
 	private Connection connection;
 	private String sql;
-	private List<Object> valueList;
+
 	/**
 	 * パラメータのクラスの配列です。
 	 */

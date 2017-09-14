@@ -25,9 +25,10 @@ public class BindValue {
 		} else if (class1 == String.class) {
 			ps.setString(index, (String) object);
 
-		} else if (class1 == Date.class) {
-			ps.setDate(index, (Date) object);
-
+		} else if (class1 == java.util.Date.class) {
+			java.util.Date d1 = (java.util.Date)object;
+			Date d2 = new Date(d1.getTime());
+			ps.setDate(index, d2);
 		}
 
 	}
