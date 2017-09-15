@@ -9,8 +9,8 @@ import java.util.Map;
 
 public class AutoUpdate {
 
-	private String sql;
-	private Connection connection;
+	protected String sql;
+	protected Connection connection;
 	private List<Object> valueList = new ArrayList<>();
 
 	public AutoUpdate(Connection connection) {
@@ -34,16 +34,16 @@ public class AutoUpdate {
 
 	public AutoUpdate params(Map<String, Object> map) {
 		setColsVals(map);
+		valueList.addAll(map.values());
 		return this;
 	}
 
-	private void setColsVals(Map<String, Object> map) {
+	public void setColsVals(Map<String, Object> map) {
 		int i = 0;
 		if (sql.contains("insert")) {
 			String colStr = "", valueStr = "";
 			for (String col : map.keySet()) {
 				i++;
-				valueList.add(map.get(col));
 				if (i == map.size()) {
 					colStr += col;
 					valueStr += "?";
@@ -56,7 +56,6 @@ public class AutoUpdate {
 		} else {
 			for (String col : map.keySet()) {
 				i++;
-				valueList.add(map.get(col));
 				if (i == map.size()) {
 					sql += col + "=?";
 				} else {
@@ -82,5 +81,15 @@ public class AutoUpdate {
 		} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException e) {
 			throw new javax.persistence.EntityExistsException("DBの一意制約違反");
 		}
+	}
+
+
+
+	public AutoUpdate params(List<Map<String, Object>> list) {
+
+		for(Map<String,Object> map:list){
+
+		}
+		return null;
 	}
 }

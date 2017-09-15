@@ -60,4 +60,10 @@ public class AquaJdbcManager {
 		return automatedSqlExecuter.makeDeleteSql(tableNm);
 	}
 
+	public BatchUpdate insertBatch(String tableNm) {
+		AutoUpdate automatedSqlExecuter = new AutoUpdate(connection);
+		automatedSqlExecuter=automatedSqlExecuter.makeInsretSql(tableNm);
+		return new BatchUpdate(automatedSqlExecuter);
+	}
+
 }
