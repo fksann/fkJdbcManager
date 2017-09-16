@@ -53,7 +53,7 @@ public class AutoUpdate {
 				}
 			}
 			sql += " (" + colStr + ") values(" + valueStr + ");";
-		} else {
+		} else if (sql.contains("update")) {
 			for (String col : map.keySet()) {
 				i++;
 				if (i == map.size()) {
@@ -81,15 +81,5 @@ public class AutoUpdate {
 		} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException e) {
 			throw new javax.persistence.EntityExistsException("DBの一意制約違反");
 		}
-	}
-
-
-
-	public AutoUpdate params(List<Map<String, Object>> list) {
-
-		for(Map<String,Object> map:list){
-
-		}
-		return null;
 	}
 }

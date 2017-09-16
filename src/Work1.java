@@ -19,26 +19,26 @@ public class Work1 {
 		 List<Map<String, Object>> list = new ArrayList<>();
 		 Map<String, Object> map1 = new HashMap<>();
 		 map1.put("emp_id", 100);
-		 map1.put("emp_nm", "松井稼頭央");
+		 map1.put("emp_nm", "松井卓也");
 		 map1.put("join_date", new Date());
 		 list.add(map1);
 		 Map<String, Object> map2 = new HashMap<>();
 		 map2.put("emp_id", 101);
-		 map2.put("emp_nm", "野茂英雄");
+		 map2.put("emp_nm", "野茂五郎");
 		 map2.put("join_date", new Date());
 		 list.add(map2);
 
 
 		 //バッチInsert
-		 int insertCount = ajm.insertBatch("emp_mst").params(list).execute();
+//		 int insertCount = ajm.insertBatch("emp_mst").params(list).execute();
 
-//		 //バッチ更新処理
+		 //バッチ更新処理
 //		 int updateCount =
-//		 ajm.updateBatch("table_name").params(list).where("col1").execute();//"col1"の値はListのmapから取得される（ここのwhereの引数はカラム名の可変長文字列）
-//
-//		 //バッチ削除処理
-//		 int deleteCount =
-//		 ajm.deleteBatch("table_name").params(list).where("col1").execute();//"col1"の値はListのmapから取得される（ここのwhereの引数はカラム名の可変長文字列）
+//		 ajm.updateBatch("emp_mst").params(list).where("emp_id").execute();//"col1"の値はListのmapから取得される（ここのwhereの引数はカラム名の可変長文字列）
+
+		 //バッチ削除処理
+		 int deleteCount =
+		 ajm.deleteBatch("emp_mst").params(list).where("emp_id").execute();//"col1"の値はListのmapから取得される（ここのwhereの引数はカラム名の可変長文字列）
 
 		System.out.println("hello.");
 	}
