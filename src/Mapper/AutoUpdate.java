@@ -11,6 +11,7 @@ public class AutoUpdate {
 
 	protected String sql;
 	protected Connection connection;
+	private Map<String, Object> map;
 	private List<Object> valueList = new ArrayList<>();
 
 	public AutoUpdate(Connection connection) {
@@ -34,12 +35,19 @@ public class AutoUpdate {
 
 	public AutoUpdate params(Map<String, Object> map) {
 		setColsVals(map);
-		valueList.addAll(map.values());
+		for (String col : map.keySet()) {
+			if (col.equals("version")) {
+				continue;
+			} else {
+				valueList.add(map.get(col));
+			}
+		}
 		return this;
 	}
 
 	public void setColsVals(Map<String, Object> map) {
 		int i = 0;
+		this.map = map;
 		if (sql.contains("insert")) {
 			String colStr = "", valueStr = "";
 			for (String col : map.keySet()) {
@@ -56,6 +64,10 @@ public class AutoUpdate {
 		} else if (sql.contains("update")) {
 			for (String col : map.keySet()) {
 				i++;
+				if (col.equals("version")) {
+					sql += "version=version+1";
+					continue;
+				}
 				if (i == map.size()) {
 					sql += col + "=?";
 				} else {
@@ -71,13 +83,44 @@ public class AutoUpdate {
 		return this;
 	}
 
+	public AutoUpdate where(String... cols) {
+		makeConditions(cols);
+		setVals(cols);
+		return this;
+	}
+
+	private void makeConditions(String[] cols) {
+		sql += " where " + cols[0] + "=?";
+		for (int i = 1; i < cols.length; i++) {
+			sql += " and " + cols[i] + "=?";
+		}
+	}
+
+	private void setVals(String[] cols) {
+		for (String col : cols) {
+			valueList.add(map.get(col));
+		}
+
+	}
+
+	public AutoUpdate version(String version) {
+		sql += " and version=?";
+		valueList.add(map.get(version));
+		return this;
+	}
+
 	public int execute() throws SQLException {
 		PreparedStatement ps = connection.prepareStatement(sql);
 		for (int i = 0; i < valueList.size(); i++) {
 			BindValue.setParam(i + 1, valueList.get(i), valueList.get(i).getClass(), ps);
 		}
 		try {
-			return ps.executeUpdate();
+			int i = ps.executeUpdate();
+			if (i == 0) {
+				throw new javax.persistence.OptimisticLockException("他のユーザーに先に更新処理されている");
+			} else {
+				return i;
+			}
 		} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException e) {
 			throw new javax.persistence.EntityExistsException("DBの一意制約違反");
 		}

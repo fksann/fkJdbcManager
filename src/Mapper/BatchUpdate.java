@@ -3,12 +3,14 @@ package Mapper;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 public class BatchUpdate {
 
 	private List<Object> valueList = new ArrayList<>();
+	private List<List<Object>> valueLists = new ArrayList<>();
 	private List<Map<String, Object>> list = new ArrayList<>();
 	private AutoUpdate automatedSqlExecuter;
 	private int batchCnt;
@@ -45,12 +47,32 @@ public class BatchUpdate {
 	private void setVals(String[] cols) {
 		for (Map<String, Object> map : list) {
 			if (automatedSqlExecuter.sql.contains("update")) {
-				valueList.addAll(map.values());
-			}
-			for (int i = 0; i < cols.length; i++) {
-				valueList.add(map.get(cols[i]));
+				List<Object> valueList = new ArrayList<>();
+				for (String col : map.keySet()) {
+					if (col.equals("version")) {
+						continue;
+					} else {
+						valueList.add(map.get(col));
+					}
+				}
+				for (int i = 0; i < cols.length; i++) {
+					valueList.add(map.get(cols[i]));
+				}
+				valueLists.add(valueList);
+			} else {
+				for (int i = 0; i < cols.length; i++) {
+					valueList.add(map.get(cols[i]));
+				}
 			}
 		}
+	}
+
+	public BatchUpdate version(String string) {
+		automatedSqlExecuter.sql += " and version=?";
+		for (int i = 0; i < list.size(); i++) {
+			valueLists.get(i).add(list.get(i).get("version"));
+		}
+		return this;
 	}
 
 	public int execute() throws SQLException {
@@ -60,10 +82,30 @@ public class BatchUpdate {
 
 		int[] updateCounts = ps.executeBatch();
 
-		return sum(updateCounts);
+		if (Arrays.asList(updateCounts).contains(0)) {
+			String errIndex = "";
+			for (int i = 0; i < updateCounts.length; i++) {
+				if (updateCounts[i] == 0) {
+					if (errIndex.contains("目")) {
+						errIndex += "、" + i + 1 + "つ目";
+					} else {
+						errIndex += i + 1 + "つ目";
+					}
+				}
+			}
+			throw new javax.persistence.OptimisticLockException(errIndex + "の処理は、他のユーザーに先に更新処理されている");
+
+		} else {
+			return sum(updateCounts);
+		}
 	}
 
 	private void makeBatch(PreparedStatement ps) throws SQLException {
+		if (automatedSqlExecuter.sql.contains("update")) {
+			for (List<Object> l : valueLists) {
+				valueList.addAll(l);
+			}
+		}
 		for (int i = 0; i < batchCnt; i++) {
 			for (int j = 0; j < ps.getParameterMetaData().getParameterCount(); j++) {
 				BindValue.setParam(j + 1, valueList.get(j + i * ps.getParameterMetaData().getParameterCount()),
