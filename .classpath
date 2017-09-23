@@ -26,7 +26,6 @@
 	<classpathentry kind="lib" path="C:/workspace/aquaJdbcManager/library/ognl-2.6.9-patch-20090427.jar"/>
 	<classpathentry kind="lib" path="C:/workspace/aquaJdbcManager/library/poi-3.0-FINAL.jar"/>
 	<classpathentry kind="lib" path="C:/workspace/aquaJdbcManager/library/portlet-api-1.0.jar"/>
-	<classpathentry kind="lib" path="C:/workspace/aquaJdbcManager/library/s2-extension-2.4.48.jar"/>
 	<classpathentry kind="lib" path="C:/workspace/aquaJdbcManager/library/s2-framework-2.4.48.jar"/>
 	<classpathentry kind="lib" path="C:/workspace/aquaJdbcManager/library/s2-tiger-2.4.48.jar"/>
 	<classpathentry kind="lib" path="C:/workspace/aquaJdbcManager/library/uow_api-6.jar"/>

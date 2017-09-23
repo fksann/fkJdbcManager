@@ -7,34 +7,36 @@ import java.sql.SQLException;
 public class AquaJdbcManager {
 
 	protected Connection connection;
-	protected AutoSelect automatedSqlExecuter;
+	protected AutoSelect autoSelect;
+	private AutoUpdate autoUpdate;
+	private BatchUpdate batchUpdate;
 
 	public AquaJdbcManager(String db_url, String db_user_id, String db_user_password) throws SQLException {
 		connection = DriverManager.getConnection(db_url, db_user_id, db_user_password);
 	}
 
-	// select
+	// selectを実行する。
 	public SqlSelect selectBySql(String sql) {
 		SqlSelect directSqlExecuter = new SqlSelect(connection, sql);
 		return directSqlExecuter;
 	}
 
 	public AquaJdbcManager select(String... columns) {
-		automatedSqlExecuter = new AutoSelect(connection).makeSelectSql(columns);
+		autoSelect = new AutoSelect(connection).makeSelectSql(columns);
 		return this;
 	}
 
 	public AutoSelect from(String tableNm) {
-		if (this.automatedSqlExecuter == null) {
-			this.automatedSqlExecuter = new AutoSelect(this.connection).makeFromSql(tableNm);
+		if (autoSelect == null) {
+			autoSelect = new AutoSelect(this.connection).makeFromSql(tableNm);
 		} else {
-			this.automatedSqlExecuter = this.automatedSqlExecuter.makeFromSql(tableNm);
+			autoSelect = autoSelect.makeFromSql(tableNm);
 		}
 
-		return automatedSqlExecuter;
+		return autoSelect;
 	}
 
-	// update,insert,delete
+	// update,insert,deleteを実行する。
 	public SqlUpdate updateBySql(String sql) {
 		SqlUpdate directSqlExecuter = new SqlUpdate(connection, sql);
 		return directSqlExecuter;
@@ -46,36 +48,53 @@ public class AquaJdbcManager {
 	}
 
 	public AutoUpdate insert(String tableNm) {
-		AutoUpdate automatedSqlExecuter = new AutoUpdate(connection);
-		return automatedSqlExecuter.makeInsretSql(tableNm);
+		autoUpdate = new AutoUpdate(connection);
+		return autoUpdate.makeInsretSql(tableNm);
 	}
 
 	public AutoUpdate update(String tableNm) {
-		AutoUpdate automatedSqlExecuter = new AutoUpdate(connection);
-		return automatedSqlExecuter.makeUpdateSql(tableNm);
+		autoUpdate = new AutoUpdate(connection);
+		return autoUpdate.makeUpdateSql(tableNm);
 	}
 
 	public AutoUpdate delete(String tableNm) {
-		AutoUpdate automatedSqlExecuter = new AutoUpdate(connection);
-		return automatedSqlExecuter.makeDeleteSql(tableNm);
+		autoUpdate = new AutoUpdate(connection);
+		return autoUpdate.makeDeleteSql(tableNm);
 	}
 
 	public BatchUpdate insertBatch(String tableNm) {
 		AutoUpdate automatedSqlExecuter = new AutoUpdate(connection);
-		automatedSqlExecuter=automatedSqlExecuter.makeInsretSql(tableNm);
-		return new BatchUpdate(automatedSqlExecuter);
+		automatedSqlExecuter = automatedSqlExecuter.makeInsretSql(tableNm);
+		batchUpdate = new BatchUpdate(automatedSqlExecuter);
+		return batchUpdate;
 	}
 
 	public BatchUpdate updateBatch(String tableNm) {
 		AutoUpdate automatedSqlExecuter = new AutoUpdate(connection);
-		automatedSqlExecuter=automatedSqlExecuter.makeUpdateSql(tableNm);
-		return new BatchUpdate(automatedSqlExecuter);
+		automatedSqlExecuter = automatedSqlExecuter.makeUpdateSql(tableNm);
+		batchUpdate = new BatchUpdate(automatedSqlExecuter);
+		return batchUpdate;
 	}
 
 	public BatchUpdate deleteBatch(String tableNm) {
 		AutoUpdate automatedSqlExecuter = new AutoUpdate(connection);
-		automatedSqlExecuter=automatedSqlExecuter.makeDeleteSql(tableNm);
-		return new BatchUpdate(automatedSqlExecuter);
+		automatedSqlExecuter = automatedSqlExecuter.makeDeleteSql(tableNm);
+		batchUpdate = new BatchUpdate(automatedSqlExecuter);
+		return batchUpdate;
+	}
+
+	// 実行したsqlの内容を表示
+	public SqlLog getLastSqlLog() {
+		if (autoSelect != null) {
+			return autoSelect.sqlLog;
+		} else if (batchUpdate != null) {
+			return batchUpdate.sqlLog;
+		} else if (autoUpdate != null) {
+			return autoUpdate.sqlLog;
+
+		} else {
+			return null;
+		}
 	}
 
 }

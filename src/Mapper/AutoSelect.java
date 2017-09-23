@@ -3,6 +3,7 @@ package Mapper;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ public class AutoSelect {
 	private String sql;
 	private List<String> valueList;
 	private int maxRows;
+	protected SqlLog sqlLog;
 
 	public AutoSelect(Connection connection) {
 		this.connection = connection;
@@ -90,31 +92,35 @@ public class AutoSelect {
 		return this;
 	}
 
-	public List<Map<String, Object>> getResultList() throws SQLException {
+	public List<Map<String, Object>> getResultList() throws SQLException, ClassNotFoundException {
 		PreparedStatement ps = makePreparedStatement();
 		return Select.executeMultiple(ps);
 	}
 
-	public Map<String, Object> getSingleResult() throws SQLException {
+	public Map<String, Object> getSingleResult() throws SQLException, ClassNotFoundException {
 		PreparedStatement ps = makePreparedStatement();
 		return Select.executeSingle(ps);
 	}
 
-	public long getCount() throws SQLException {
+	public long getCount() throws SQLException, ClassNotFoundException {
 		this.sql = this.sql.replace(
 				this.sql.substring(this.sql.lastIndexOf("select") + 6, this.sql.lastIndexOf("from")), " count(*) ");
 		PreparedStatement ps = makePreparedStatement();
 		return Select.executeCount(ps);
 	}
 
-	public PreparedStatement makePreparedStatement() throws SQLException {
+	public PreparedStatement makePreparedStatement() throws SQLException, ClassNotFoundException {
 		PreparedStatement ps = connection.prepareStatement(sql);
+
 		if (valueList != null) {
 			for (int i = 0; i < valueList.size(); i++) {
 				ps.setString(i + 1, valueList.get(i));
 			}
 		}
+
 		statementUtils(ps);
+		saveLog(ps);
+
 		return ps;
 	}
 
@@ -124,4 +130,28 @@ public class AutoSelect {
 		}
 	}
 
+	private void saveLog(PreparedStatement ps) throws ClassNotFoundException, SQLException {
+		sqlLog = new SqlLog(sql, makeCompleteSql(ps), valueList.toArray(), getClassArray(ps));
+	}
+
+	private String makeCompleteSql(PreparedStatement ps) throws SQLException {
+		String completeSql = sql;
+
+		for(int i =0;i<ps.getParameterMetaData().getParameterCount();i++){
+			completeSql=completeSql.replaceFirst("\\?", valueList.get(i).toString());
+		}
+
+		return completeSql;
+	}
+
+	private Class<?>[] getClassArray(PreparedStatement ps) throws SQLException, ClassNotFoundException {
+		List<Class<?>> classList = new ArrayList<>();
+
+		for (int i = 1; i < ps.getParameterMetaData().getParameterCount(); i++) {
+			String classNm = ps.getParameterMetaData().getParameterClassName(i);
+			classList.add(Class.forName(classNm));
+		}
+
+		return classList.toArray(new Class[classList.size()]);
+	}
 }

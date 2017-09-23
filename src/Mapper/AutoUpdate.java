@@ -13,6 +13,7 @@ public class AutoUpdate {
 	protected Connection connection;
 	private Map<String, Object> map;
 	private List<Object> valueList = new ArrayList<>();
+	protected SqlLog sqlLog;
 
 	public AutoUpdate(Connection connection) {
 		this.connection = connection;
@@ -109,11 +110,14 @@ public class AutoUpdate {
 		return this;
 	}
 
-	public int execute() throws SQLException {
+	public int execute() throws SQLException, ClassNotFoundException {
 		PreparedStatement ps = connection.prepareStatement(sql);
 		for (int i = 0; i < valueList.size(); i++) {
 			BindValue.setParam(i + 1, valueList.get(i), valueList.get(i).getClass(), ps);
 		}
+
+		saveLog(ps);
+
 		try {
 			int i = ps.executeUpdate();
 			if (i == 0) {
@@ -124,5 +128,30 @@ public class AutoUpdate {
 		} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException e) {
 			throw new javax.persistence.EntityExistsException("DBの一意制約違反");
 		}
+	}
+
+	private void saveLog(PreparedStatement ps) throws ClassNotFoundException, SQLException {
+		sqlLog = new SqlLog(sql, makeCompleteSql(ps), valueList.toArray(), getClassArray(ps));
+	}
+
+	private String makeCompleteSql(PreparedStatement ps) throws SQLException {
+		String completeSql = sql;
+
+		for(int i =0;i<ps.getParameterMetaData().getParameterCount();i++){
+			completeSql=completeSql.replaceFirst("\\?", valueList.get(i).toString());
+		}
+
+		return completeSql;
+	}
+
+	private Class<?>[] getClassArray(PreparedStatement ps) throws SQLException, ClassNotFoundException {
+		List<Class<?>> classList = new ArrayList<>();
+
+		for (int i = 1; i <= ps.getParameterMetaData().getParameterCount(); i++) {
+			String classNm = ps.getParameterMetaData().getParameterClassName(i);
+			classList.add(Class.forName(classNm));
+		}
+
+		return classList.toArray(new Class[classList.size()]);
 	}
 }

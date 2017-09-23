@@ -3,7 +3,6 @@ package Mapper;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +13,7 @@ public class BatchUpdate {
 	private List<Map<String, Object>> list = new ArrayList<>();
 	private AutoUpdate automatedSqlExecuter;
 	private int batchCnt;
+	protected SqlLog sqlLog;
 
 	public BatchUpdate(AutoUpdate automatedSqlExecuter) {
 		this.automatedSqlExecuter = automatedSqlExecuter;
@@ -75,29 +75,38 @@ public class BatchUpdate {
 		return this;
 	}
 
-	public int execute() throws SQLException {
+	public int execute() throws SQLException, ClassNotFoundException {
 		PreparedStatement ps = automatedSqlExecuter.connection.prepareStatement(automatedSqlExecuter.sql);
 
 		makeBatch(ps);
+		saveLog(ps);
 
-		int[] updateCounts = ps.executeBatch();
+		try {
+			int[] updateCounts = ps.executeBatch();
 
-		if (Arrays.asList(updateCounts).contains(0)) {
-			String errIndex = "";
+			List<Integer> l = new ArrayList<>();
 			for (int i = 0; i < updateCounts.length; i++) {
-				if (updateCounts[i] == 0) {
-					if (errIndex.contains("目")) {
-						errIndex += "、" + i + 1 + "つ目";
-					} else {
+				l.add(updateCounts[i]);
+			}
+			if (l.contains(0)) {
+				String errIndex = "";
+				for (int i = 0; i < updateCounts.length; i++) {
+					if (updateCounts[i] == 0) {
+						if (errIndex.contains("目")) {
+							errIndex += "、";
+						}
 						errIndex += i + 1 + "つ目";
 					}
 				}
-			}
-			throw new javax.persistence.OptimisticLockException(errIndex + "の処理は、他のユーザーに先に更新処理されている");
+				throw new javax.persistence.OptimisticLockException(errIndex + "の処理は、他のユーザーに先に更新処理されている");
 
-		} else {
-			return sum(updateCounts);
+			} else {
+				return sum(updateCounts);
+			}
+		} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException e) {
+			throw new javax.persistence.EntityExistsException("DBの一意制約違反");
 		}
+
 	}
 
 	private void makeBatch(PreparedStatement ps) throws SQLException {
@@ -113,6 +122,35 @@ public class BatchUpdate {
 			}
 			ps.addBatch();
 		}
+	}
+
+	private void saveLog(PreparedStatement ps) throws ClassNotFoundException, SQLException {
+		sqlLog = new SqlLog(automatedSqlExecuter.sql, makeCompleteSql(ps), valueList.toArray(), getClassArray(ps));
+	}
+
+	private String makeCompleteSql(PreparedStatement ps) throws SQLException {
+		String completeSql = automatedSqlExecuter.sql;
+
+		for (int i = 0; i < valueLists.size() - 1; i++) {
+			completeSql += "\n" + automatedSqlExecuter.sql;
+		}
+
+		for (int i = 0; i < ps.getParameterMetaData().getParameterCount() * valueLists.size(); i++) {
+			completeSql = completeSql.replaceFirst("\\?", valueList.get(i).toString());
+		}
+
+		return completeSql;
+	}
+
+	private Class<?>[] getClassArray(PreparedStatement ps) throws SQLException, ClassNotFoundException {
+		List<Class<?>> classList = new ArrayList<>();
+
+		for (int i = 1; i <= ps.getParameterMetaData().getParameterCount(); i++) {
+			String classNm = ps.getParameterMetaData().getParameterClassName(i);
+			classList.add(Class.forName(classNm));
+		}
+
+		return classList.toArray(new Class[classList.size()]);
 	}
 
 	private int sum(int[] updateCounts) {
