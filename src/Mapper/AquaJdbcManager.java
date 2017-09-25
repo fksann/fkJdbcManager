@@ -91,7 +91,6 @@ public class AquaJdbcManager {
 			return batchUpdate.sqlLog;
 		} else if (autoUpdate != null) {
 			return autoUpdate.sqlLog;
-
 		} else {
 			return null;
 		}

@@ -11,19 +11,19 @@ import Mapper.SqlLog;
 public class Work1 {
 
 	public static void main(String[] arg) throws SQLException, ClassNotFoundException {
-		AquaJdbcManager ajm = new AquaJdbcManager("jdbc:mysql://localhost:3306/data?characterEncoding=UTF-8&generateSimpleParameterMetadata=true", "root",
+		AquaJdbcManager ajm = new AquaJdbcManager("jdbc:mysql://localhost:3306/data?characterEncoding=UTF-8", "root",
 				"3927");
 
 		List<Map<String, Object>> list = new ArrayList<>();
 		Map<String, Object> map1 = new HashMap<String, Object>();
 		map1.put("emp_id",65 );//現在のid
 		map1.put("emp_nm", "鶏肉");
-		map1.put("version", 5);//現在のversion
+		map1.put("version", 6);//現在のversion
 		list.add(map1);
 		Map<String, Object> map2 = new HashMap<String, Object>();
 		map2.put("emp_id",76 );//現在のid
 		map2.put("emp_nm", "チョコクッキー");
-		map2.put("version", 3);//現在のversion
+		map2.put("version", 4);//現在のversion
 		list.add(map2);
 
 		ajm.updateBatch("emp_mst").params(list).where("emp_id").version("version").execute();

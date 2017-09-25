@@ -125,7 +125,7 @@ public class BatchUpdate {
 	}
 
 	private void saveLog(PreparedStatement ps) throws ClassNotFoundException, SQLException {
-		sqlLog = new SqlLog(automatedSqlExecuter.sql, makeCompleteSql(ps), valueList.toArray(), getClassArray(ps));
+		sqlLog = new SqlLog(automatedSqlExecuter.sql, makeCompleteSql(ps), valueList.toArray(), getClassArray());
 	}
 
 	private String makeCompleteSql(PreparedStatement ps) throws SQLException {
@@ -142,12 +142,10 @@ public class BatchUpdate {
 		return completeSql;
 	}
 
-	private Class<?>[] getClassArray(PreparedStatement ps) throws SQLException, ClassNotFoundException {
+	private Class<?>[] getClassArray() throws SQLException, ClassNotFoundException {
 		List<Class<?>> classList = new ArrayList<>();
-
-		for (int i = 1; i <= ps.getParameterMetaData().getParameterCount(); i++) {
-			String classNm = ps.getParameterMetaData().getParameterClassName(i);
-			classList.add(Class.forName(classNm));
+		for (Object o:valueList) {
+			classList.add(o.getClass());
 		}
 
 		return classList.toArray(new Class[classList.size()]);
