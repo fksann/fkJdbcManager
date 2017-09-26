@@ -10,10 +10,22 @@ public class SqlSelect {
 
 	private Connection connection;
 	private String sql;
+	private int maxRows;
+	private int queryTimeout;
 
 	public SqlSelect(Connection Connection, String sql) {
 		this.connection = Connection;
 		this.sql = sql;
+	}
+
+	public SqlSelect maxRows(int maxRows) {
+		this.maxRows = maxRows;
+		return this;
+	}
+
+	public SqlSelect setQueryTimeout(int time) {
+		queryTimeout = time;
+		return this;
 	}
 
 	public List<Map<String, Object>> getResultList() throws SQLException {
@@ -29,5 +41,14 @@ public class SqlSelect {
 	public long getCount() throws SQLException {
 		PreparedStatement ps = connection.prepareStatement(sql);
 		return Select.executeCount(ps);
+	}
+
+	public void statementUtils(PreparedStatement ps) throws SQLException {
+		if (maxRows > 0) {
+			ps.setMaxRows(maxRows);
+		}
+        if (queryTimeout > 0) {
+            ps.setQueryTimeout(queryTimeout);
+        }
 	}
 }

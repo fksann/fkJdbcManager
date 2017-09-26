@@ -13,6 +13,7 @@ public class AutoSelect {
 	private String sql;
 	private List<String> valueList;
 	private int maxRows;
+	private int queryTimeout;
 	protected SqlLog sqlLog;
 
 	public AutoSelect(Connection connection) {
@@ -82,6 +83,11 @@ public class AutoSelect {
 		return this;
 	}
 
+	public AutoSelect setQueryTimeout(int time) {
+		queryTimeout = time;
+		return this;
+	}
+
 	public AutoSelect innerJoin(String tableNm, String joinColumn) {
 		this.sql += " inner join " + tableNm + " on " + joinColumn;
 		return this;
@@ -125,9 +131,12 @@ public class AutoSelect {
 	}
 
 	public void statementUtils(PreparedStatement ps) throws SQLException {
-		if (this.maxRows > 0) {
-			ps.setMaxRows(this.maxRows);
+		if (maxRows > 0) {
+			ps.setMaxRows(maxRows);
 		}
+        if (queryTimeout > 0) {
+            ps.setQueryTimeout(queryTimeout);
+        }
 	}
 
 	private void saveLog(PreparedStatement ps) throws ClassNotFoundException, SQLException {
@@ -151,4 +160,5 @@ public class AutoSelect {
 		}
 		return classList.toArray(new Class[classList.size()]);
 	}
+
 }

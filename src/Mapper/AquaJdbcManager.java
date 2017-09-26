@@ -11,8 +11,15 @@ public class AquaJdbcManager {
 	private AutoUpdate autoUpdate;
 	private BatchUpdate batchUpdate;
 
-	public AquaJdbcManager(String db_url, String db_user_id, String db_user_password) throws SQLException {
-		connection = DriverManager.getConnection(db_url, db_user_id, db_user_password);
+	//コンストラクタ
+	public AquaJdbcManager(String dbUrl, String dbUserId, String dbUserPassword) throws SQLException {
+		connection = DriverManager.getConnection(dbUrl, dbUserId, dbUserPassword);
+		connection.setAutoCommit(true);
+	}
+
+	public AquaJdbcManager(String dbUrl, String dbUserId, String dbUserPassword, boolean autoCommit) throws SQLException {
+		connection = DriverManager.getConnection(dbUrl, dbUserId, dbUserPassword);
+		connection.setAutoCommit(autoCommit);
 	}
 
 	// selectを実行する。
@@ -81,6 +88,24 @@ public class AquaJdbcManager {
 		automatedSqlExecuter = automatedSqlExecuter.makeDeleteSql(tableNm);
 		batchUpdate = new BatchUpdate(automatedSqlExecuter);
 		return batchUpdate;
+	}
+
+	//トランザクション処理
+	public void setAutoCommit(boolean autoCommit) throws SQLException{
+		connection.commit();
+		connection.setAutoCommit(autoCommit);
+	}
+
+	public boolean getAutoCommit() throws SQLException{
+		return connection.getAutoCommit();
+	}
+
+	public void rollback() throws SQLException {
+		connection.rollback();
+	}
+
+	public void commit() throws SQLException {
+		connection.commit();
 	}
 
 	// 実行したsqlの内容を表示

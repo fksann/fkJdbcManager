@@ -37,9 +37,11 @@ public class AutoUpdate {
 	public AutoUpdate params(Map<String, Object> map) {
 		setColsVals(map);
 		for (String col : map.keySet()) {
-			if (col.equals("version")) {
+			if(sql.contains("delete")){
+				break;
+			} else if (col.equals("version")) {
 				continue;
-			} else {
+			}{
 				valueList.add(map.get(col));
 			}
 		}
@@ -137,8 +139,8 @@ public class AutoUpdate {
 	private String makeCompleteSql(PreparedStatement ps) throws SQLException {
 		String completeSql = sql;
 
-		for(int i =0;i<ps.getParameterMetaData().getParameterCount();i++){
-			completeSql=completeSql.replaceFirst("\\?", valueList.get(i).toString());
+		for (int i = 0; i < ps.getParameterMetaData().getParameterCount(); i++) {
+			completeSql = completeSql.replaceFirst("\\?", valueList.get(i).toString());
 		}
 
 		return completeSql;
@@ -146,7 +148,7 @@ public class AutoUpdate {
 
 	private Class<?>[] getClassArray() throws SQLException, ClassNotFoundException {
 		List<Class<?>> classList = new ArrayList<>();
-		for (Object o:valueList) {
+		for (Object o : valueList) {
 			classList.add(o.getClass());
 		}
 		return classList.toArray(new Class[classList.size()]);
