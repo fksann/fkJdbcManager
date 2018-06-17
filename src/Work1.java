@@ -6,12 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import Mapper.AquaJdbcManager;
+import Mapper.FuyukiJdbcManager;
 
 public class Work1 {
 
 	public static void main(String[] arg) throws SQLException, ClassNotFoundException {
-		AquaJdbcManager ajm = new AquaJdbcManager("jdbc:mysql://localhost:3306/data?characterEncoding=UTF-8", "root",
+		FuyukiJdbcManager ajm = new FuyukiJdbcManager("jdbc:mysql://localhost:3306/data?characterEncoding=UTF-8", "root",
 				"3927",false);
 
 		List<Map<String, Object>> list1 = new ArrayList<>();
@@ -53,6 +53,6 @@ public class Work1 {
 }
 
 // カラムやvalueはStringで渡すようになっている。
-// valueをリストやセットで渡すことは現状できない。
+// valueをリストやセットで渡すこ。とは現状できない。
 // SimpleWhere().excludesWhitespace()も実装していない。
-// ajmを使いまわせなくなっています。
+// ajmを使いまわせなくなっています

@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class AquaJdbcManager {
+public class FuyukiJdbcManager {
 
 	protected Connection connection;
 	protected AutoSelect autoSelect;
@@ -12,12 +12,12 @@ public class AquaJdbcManager {
 	private BatchUpdate batchUpdate;
 
 	//コンストラクタ
-	public AquaJdbcManager(String dbUrl, String dbUserId, String dbUserPassword) throws SQLException {
+	public FuyukiJdbcManager(String dbUrl, String dbUserId, String dbUserPassword) throws SQLException {
 		connection = DriverManager.getConnection(dbUrl, dbUserId, dbUserPassword);
 		connection.setAutoCommit(true);
 	}
 
-	public AquaJdbcManager(String dbUrl, String dbUserId, String dbUserPassword, boolean autoCommit) throws SQLException {
+	public FuyukiJdbcManager(String dbUrl, String dbUserId, String dbUserPassword, boolean autoCommit) throws SQLException {
 		connection = DriverManager.getConnection(dbUrl, dbUserId, dbUserPassword);
 		connection.setAutoCommit(autoCommit);
 	}
@@ -28,7 +28,7 @@ public class AquaJdbcManager {
 		return directSqlExecuter;
 	}
 
-	public AquaJdbcManager select(String... columns) {
+	public FuyukiJdbcManager select(String... columns) {
 		autoSelect = new AutoSelect(connection).makeSelectSql(columns);
 		return this;
 	}

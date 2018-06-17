@@ -40,6 +40,15 @@ public class AutoSelect {
 		return this;
 	}
 
+	public AutoSelect param(Map<String, String> map) {
+		Where w = new Where();
+		for(String col:map.keySet()){
+			w = w.eq(col, map.get(col));
+		}
+		sql += w.whereStr;
+		return this;
+	}
+
 	public AutoSelect where(Where whereConditions) {
 		this.sql = this.sql + whereConditions.whereStr;
 		this.valueList = whereConditions.valueList;
